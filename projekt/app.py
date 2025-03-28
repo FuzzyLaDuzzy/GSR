@@ -2,7 +2,6 @@ import time
 import threading
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
-import ssl
 from werkzeug.security import generate_password_hash, check_password_hash
 from agent import AgenteLSNMPvS, VirtualSensor  # Import from agent.py
 
@@ -43,10 +42,10 @@ def logout():
 
 # --- Sensor Management ---
 agent = AgenteLSNMPvS(
-    "127.0.0.1",
+    "0.0.0.0",
     12345,
-    "/home/fuzzymind/Documents/GSR/projekt/certificado.pem",  # Replace with your certificate path
-    "/home/fuzzymind/Documents/GSR/projekt/chave_privada.pem",  # Replace with your private key path
+    "",
+    "",
 )
 
 sensor1 = VirtualSensor("1", 0, 100, 1, 2)
@@ -134,11 +133,8 @@ if __name__ == '__main__':
     update_thread = threading.Thread(target=send_sensor_updates, args=(agent,))
     update_thread.start()
 
-    # Run the Flask app with SSL
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain('/home/fuzzymind/Documents/GSR/projekt/certificado.pem', '/home/fuzzymind/Documents/GSR/projekt/chave_privada.pem')  # Replace with your paths
     try:
-        socketio.run(app, debug=True, ssl_context=context, host="0.0.0.0")
+        socketio.run(app, debug=True, host="0.0.0.0")
     except KeyboardInterrupt:
         print("Shutting down...")
     finally:
