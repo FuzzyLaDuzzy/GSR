@@ -1,0 +1,11 @@
+body {
+    font-family: sans-serif;
+}
+
+#sensor-data {
+    margin-top: 20px;
+}
+
+.error {
+    color: red;
+}

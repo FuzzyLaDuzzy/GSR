@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor Monitoring</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .sensor-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sensor Monitoring</h1>
+    <a href="/logout">Logout</a> | <a href="/config">Config</a>
+    <form action="/reset" method="POST">
+        <button type="submit">Reset Device</button>
+    </form>
+    <h2>Device Data</h2>
+    <p>lMibId: {{ device['device.lMibId'] }}</p>
+    <p>id: {{ device['device.id'] }}</p>
+    <p>type: {{ device['device.type'] }}</p>
+    <p>beaconRate: {{ device['device.beaconRate'] }}</p>
+    <p>nSensors: {{ device['device.nSensors'] }}</p>
+    <p>dateAndTime: {{ device['device.dateAndTime'] }}</p>
+    <p>upTime: {{ device['device.upTime'] }}</p>
+    <p>opStatus: {{ device['device.opStatus'] }}</p>
+    <p>reset: {{ device['device.reset'] }}</p>
+    <div id="sensors-data">
+        <!-- Sensor data will be displayed here -->
+    </div>
+
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('sensor_update', (data) => {
+            console.log('Sensor update:', data);
+            const sensorsDataDiv = document.getElementById('sensors-data');
+            sensorsDataDiv.innerHTML = ''; // Clear previous data
+
+            for (const sensorId in data) {
+                const sensor = data[sensorId];
+                const sensorDiv = document.createElement('div');
+                sensorDiv.classList.add('sensor-container');
+                sensorDiv.innerHTML = `
+                    <h3>Sensor ${sensorId}</h3>
+                    <p>Value: ${sensor.value}%</p>
+                    <p>Last Sampling Time: ${new Date(sensor.last_sampling_time * 1000).toLocaleTimeString()}</p>
+                    <p>Sampling Rate: ${sensor.sampling_rate}</p>
+                `;
+                sensorsDataDiv.appendChild(sensorDiv);
+            }
+        });
+    </script>
+</body>
+</html>
