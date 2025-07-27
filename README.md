@@ -1,3 +1,4 @@
-Gestão de Segurança de Redes
+# GSR - 24/25 Project: L-SNMP agent-monitor (sensor data)
 
-Created by: Flávio Silva
+
+PG57539 - Flávio Silva
